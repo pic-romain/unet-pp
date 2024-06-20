@@ -27,11 +27,6 @@ def cdf_csgd(z,rho_k,rho_theta,rho_delta):
     delta = - k*theta / (1 + np.exp(-rho_delta))
     return (z>=0)*gamma.cdf(x=z,a=k,loc=delta,scale=theta)
 
-def group_raw(X):
-    return np.concatenate((X[:,:-2,:-2], X[:,1:-1,:-2],X[:,2:,:-2],
-                           X[:,:-2,1:-1], X[:,1:-1,1:-1],X[:,2:,1:-1],
-                           X[:,:-2,2:], X[:,1:-1,2:],X[:,2:,2:]),axis=-1)
-
 # ---------------------------------------------------------------------------- #
 #                                 PLOT METRICS                                 #
 # ---------------------------------------------------------------------------- #
@@ -52,12 +47,6 @@ def plot_grid_roc(data,y_true,thresholds,path,file_name,r=3,c=3,lw=2):
                 )
                 F_pred = v[0][p]
                 F_pred, y_obs = F_pred[~np.isnan(F_pred)], y_obs[~np.isnan(F_pred)]
-            elif v[1][:3]=="Raw":
-                F_pred, y_obs = quantile_to_F(
-                    q_pred=group_raw(v[0]),
-                    y_obs=y_true[:,1:-1,1:-1],
-                    threshold=t
-                )
             else:
                 F_pred, y_obs = quantile_to_F(
                     q_pred=v[0],
