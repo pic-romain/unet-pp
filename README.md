@@ -1,14 +1,15 @@
-# U-Net-based Methods for the Postprocessing of Precipitation Ensemble Forecasts
+# Distributional Regression U-Nets for the Postprocessing of Precipitation Ensemble Forecasts
 
-This repository contains the code for the article "U-Net-based Methods for the Postprocessing of Precipitation Ensemble Forecasts" by R. Pic, C. Dombry, P. Naveau, and M. Taillardat available on [arXiv](https://arxiv.org/abs/???) and [HAL](https://hal.archives-ouvertes.fr/hal-??????).
+This repository contains the code for the article "Distributional Regression U-Nets for the Postprocessing of Precipitation Ensemble Forecasts" by R. Pic, C. Dombry, P. Naveau, and M. Taillardat available on [arXiv](https://arxiv.org/abs/2407.02125) and [HAL](https://hal.archives-ouvertes.fr/hal-04631942).
 
 ```bibtex	
-@misc{Pic2024UNet,
-  title={U-Net-based Methods for the Postprocessing of Precipitation Ensemble Forecasts},
-  author={Pic, Romain and Dombry, Clément and Naveau, Philippe and Taillardat, Maxime},
-  eprint={???},
-  archivePrefix={arXiv},
-  year={2024}
+@misc{Pic2024DRU,
+    title={Distributional Regression U-Nets for the Postprocessing of Precipitation Ensemble Forecasts},
+    author={Romain Pic and Clément Dombry and Philippe Naveau and Maxime Taillardat},
+    year={2024},
+    eprint={2407.02125},
+    archivePrefix={arXiv},
+    url={https://arxiv.org/abs/2407.02125}, 
 }
 ```
 
