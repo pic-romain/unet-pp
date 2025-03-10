@@ -47,7 +47,7 @@ The code of this repository relies on data in the form of numpy arrays in the `d
 | `Y_trainval.npy`     | ($n_{trainval}$, $H$, $W$)               |
 | `Y_test.npy`         | ($n_{test}$, $H$, $W$)                   |
 | `trainval_dow.npy`   | ($n_{trainval}$,)                        |
-| `X_constant.npy`     | ($W$, $H$, $n_{constant}$)               |
+| `X_constant.npy`     | ($H$, $W$, $n_{constant}$)               |
 | `X_raw_trainval.npy` | ($n_{trainval}$, $H$, $W$, $n_{member}$) |
 | `X_raw_test.npy`     | ($n_{test}$, $H$, $W$, $n_{member}$)     |
 
