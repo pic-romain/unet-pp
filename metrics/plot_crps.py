@@ -143,5 +143,5 @@ for distrib in ["gtcnd","csgd"]:
                     lons=lons,
                     lats=lats,
                     margin=args.margin,
-                    path_save=os.path.join(root_out,f'/CRPS_{pred}_UNet_{distrib}_{arch}_d{depth}_nl{nl}_nc{nc}_ns{non_separable}_lr{lr}_b{batch_size}_e{epochs}_nreps{nreps}.png')
+                    path_save=os.path.join(root_out,f'CRPS_{pred}_UNet_{distrib}_{arch}_d{depth}_nl{nl}_nc{nc}_ns{non_separable}_lr{lr}_b{batch_size}_e{epochs}_nreps{nreps}.png')
                 )
