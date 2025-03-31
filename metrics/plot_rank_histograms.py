@@ -4,6 +4,7 @@ import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument("--methods", nargs="+",type=str,
                     default=["raw","qrf","qrf+gtcnd","qrf+csgd","unet+gtcnd","unet+csgd"])
+parser.add_argument("--pred", type=str, default="test")
 parser.add_argument("-r",type=int,default=3)
 parser.add_argument("-c",type=int,default=3)
 parser.add_argument("--K", type=int, default=17)
@@ -29,20 +30,30 @@ root_obs = "../data"
 root_out = "../output/plots/RankHistograms"
 
 print("Plotting the best models")
-Z_trainval_list,Z_test_list = [],[]
-JPZ_trainval_list,JPZ_test_list = [],[]
-name_trainval_list,name_test_list = [],[]
-data_trainval_list, data_test_list = [],[]
 
+if args.pred == "trainval":
+    Z_trainval_list = []
+    JPZ_trainval_list = []
+    name_trainval_list = []
+    data_trainval_list = []
+elif args.pred == "test":
+    Z_test_list = []
+    JPZ_test_list = []
+    name_test_list = []
+    data_test_list = []
+else:
+    raise ValueError("pred must be either 'trainval' or 'test'")
 
 # ------------------------------- RAW ENSEMBLE ------------------------------- #
 
 if "raw" in args.methods:
     print("RAW ENSEMBLE")
-    Z_trainval_list.append(np.load(os.path.join(root_ref,'RankHistograms/Z_raw_trainval.npy')))
-    Z_test_list.append(np.load(os.path.join(root_ref,'RankHistograms/Z_raw_test.npy')))
-    name_trainval_list.append(("Raw Ensemble",""))
-    name_test_list.append(("Raw Ensemble",""))
+    if args.pred == "trainval":
+        Z_trainval_list.append(np.load(os.path.join(root_ref,'RankHistograms/Z_raw_trainval.npy')))
+        name_trainval_list.append(("Raw Ensemble",""))
+    elif args.pred == "test":
+        Z_test_list.append(np.load(os.path.join(root_ref,'RankHistograms/Z_raw_test.npy')))
+        name_test_list.append(("Raw Ensemble",""))
 
 
 # ------------------------------------ QRF ----------------------------------- #
@@ -60,14 +71,16 @@ if "qrf" in args.methods:
             CRPS_qrf_trainval[f] = np.nanmean(np.nanmean(CRPS_qrf,axis=0))
         elif pred == "test":
             CRPS_qrf_test[f] = np.nanmean(np.nanmean(CRPS_qrf,axis=0))
-    best_qrf_trainval = "_".join(min(CRPS_qrf_trainval, key=CRPS_qrf_trainval.get).split("_")[1:])
-    best_qrf_test = "_".join(min(CRPS_qrf_test, key=CRPS_qrf_test.get).split("_")[1:])
-    del CRPS_qrf_trainval, CRPS_qrf_test
 
-    Z_trainval_list.append(np.load(os.path.join(root_ref,"RankHistograms/Z_"+best_qrf_trainval)))
-    Z_test_list.append(np.load(os.path.join(root_ref,"RankHistograms/Z_"+best_qrf_test)))
-    name_trainval_list.append(("QRF",".".join(best_qrf_trainval.split('.')[:-1])))
-    name_test_list.append(("QRF",".".join(best_qrf_test.split('.')[:-1])))
+    if args.pred == "trainval":
+        best_qrf_trainval = "_".join(min(CRPS_qrf_trainval, key=CRPS_qrf_trainval.get).split("_")[1:])
+        Z_trainval_list.append(np.load(os.path.join(root_ref,"RankHistograms/Z_"+best_qrf_trainval)))
+        name_trainval_list.append(("QRF",".".join(best_qrf_trainval.split('.')[:-1])))
+    elif args.pred == "test":
+        best_qrf_test = "_".join(min(CRPS_qrf_test, key=CRPS_qrf_test.get).split("_")[1:])
+        Z_test_list.append(np.load(os.path.join(root_ref,"RankHistograms/Z_"+best_qrf_test)))
+        name_test_list.append(("QRF",".".join(best_qrf_test.split('.')[:-1])))
+    del CRPS_qrf_trainval, CRPS_qrf_test
 
 
 # -------------------------- QRF with tail extension ------------------------- #
@@ -86,14 +99,16 @@ for distrib in ["gtcnd","csgd"]:
                 CRPS_qrftail_trainval[f] = np.nanmean(np.nanmean(CRPS_qrftail,axis=0))
             elif pred == "test":
                 CRPS_qrftail_test[f] = np.nanmean(np.nanmean(CRPS_qrftail,axis=0))
-        best_qrftail_trainval = "_".join(min(CRPS_qrftail_trainval, key=CRPS_qrftail_trainval.get).split("_")[1:])
-        best_qrftail_test = "_".join(min(CRPS_qrftail_test, key=CRPS_qrftail_test.get).split("_")[1:])
-        del CRPS_qrftail_trainval, CRPS_qrftail_test
 
-        Z_trainval_list.append(np.load(os.path.join(root_ref,"RankHistograms/Z_"+best_qrftail_trainval)))
-        Z_test_list.append(np.load(os.path.join(root_ref,"RankHistograms/Z_"+best_qrftail_test)))
-        name_trainval_list.append((f"QRF+{distrib.upper()}",".".join(best_qrftail_trainval.split('.')[:-1])))
-        name_test_list.append((f"QRF+{distrib.upper()}",".".join(best_qrftail_test.split('.')[:-1])))
+        if args.pred == "trainval":
+            best_qrftail_trainval = "_".join(min(CRPS_qrftail_trainval, key=CRPS_qrftail_trainval.get).split("_")[1:])
+            Z_trainval_list.append(np.load(os.path.join(root_ref,"RankHistograms/Z_"+best_qrftail_trainval)))
+            name_trainval_list.append((f"QRF+{distrib.upper()}",".".join(best_qrftail_trainval.split('.')[:-1])))
+        elif args.pred == "test":
+            best_qrftail_test = "_".join(min(CRPS_qrftail_test, key=CRPS_qrftail_test.get).split("_")[1:])
+            Z_test_list.append(np.load(os.path.join(root_ref,"RankHistograms/Z_"+best_qrftail_test)))
+            name_test_list.append((f"QRF+{distrib.upper()}",".".join(best_qrftail_test.split('.')[:-1])))
+        del CRPS_qrftail_trainval, CRPS_qrftail_test
         
 
 # ----------------------------------- U-Net ---------------------------------- #
@@ -113,10 +128,6 @@ for distrib in ["gtcnd","csgd"]:
             elif pred == "test":
                 CRPS_unet_test[f] = np.nanmean(np.nanmean(CRPS_unet,axis=0))
         
-        best_unet_trainval = "_".join(min(CRPS_unet_trainval, key=CRPS_unet_trainval.get).split("_")[1:])
-        best_unet_test = "_".join(min(CRPS_unet_test, key=CRPS_unet_test.get).split("_")[1:])
-        del CRPS_unet_trainval, CRPS_unet_test
-
         # -------------------------- Select specific models -------------------------- #
         # if distrib == "gtcnd":
         #     best_unet_trainval = "UNet_gtcnd_G_trainval_d2_nl0_nc0_ns0_lr1e-05_b16_e170_nreps10.npy"
@@ -125,37 +136,45 @@ for distrib in ["gtcnd","csgd"]:
         #     best_unet_trainval = "UNet_csgd_G_trainval_d2_nl0_nc0_ns0_lr1e-05_b16_e140_nreps10.npy"
         #     best_unet_test = "UNet_csgd_G_test_d2_nl0_nc0_ns0_lr1e-05_b16_e140_nreps10.npy"
 
-        Z_trainval_list.append(np.load(os.path.join(root_unet,"RankHistograms/Z_"+best_unet_trainval)))
-        Z_test_list.append(np.load(os.path.join(root_unet,"RankHistograms/Z_"+best_unet_test)))
-        name_trainval_list.append((f"U-Net+{distrib.upper()}",".".join(best_unet_trainval.split('.')[:-1])))
-        name_test_list.append((f"U-Net+{distrib.upper()}",".".join(best_unet_test.split('.')[:-1])))
+        if args.pred == "trainval":
+            best_unet_trainval = "_".join(min(CRPS_unet_trainval, key=CRPS_unet_trainval.get).split("_")[1:])
+            Z_trainval_list.append(np.load(os.path.join(root_unet,"RankHistograms/Z_"+best_unet_trainval)))
+            name_trainval_list.append((f"U-Net+{distrib.upper()}",".".join(best_unet_trainval.split('.')[:-1])))
+        elif args.pred == "test":
+            best_unet_test = "_".join(min(CRPS_unet_test, key=CRPS_unet_test.get).split("_")[1:])
+            Z_test_list.append(np.load(os.path.join(root_unet,"RankHistograms/Z_"+best_unet_test)))
+            name_test_list.append((f"U-Net+{distrib.upper()}",".".join(best_unet_test.split('.')[:-1])))
+        del CRPS_unet_trainval, CRPS_unet_test
     
 
-print("### Compute JPZ test for training/validation set ###")
-for Z in Z_trainval_list:
-    data_trainval_list.append([np.count_nonzero(np.logical_and(i/(K+1)<=Z,Z<(i+1)/(K+1)),axis=0)/Z.shape[0] for i in range(K+1)])
-    JPZ_trainval_list.append(JPZ_test(np.array([np.count_nonzero(np.logical_and(i/(K+1)<=Z,Z<(i+1)/(K+1)),axis=0) for i in range(K+1)])))
-print("### Compute JPZ test for test set ###")
-for Z in Z_test_list:
-    data_test_list.append([np.count_nonzero(np.logical_and(i/(K+1)<=Z,Z<(i+1)/(K+1)),axis=0)/Z.shape[0] for i in range(K+1)])
-    JPZ_test_list.append(JPZ_test(np.array([np.count_nonzero(np.logical_and(i/(K+1)<=Z,Z<(i+1)/(K+1)),axis=0) for i in range(K+1)])))
-
 methods = "-".join(args.methods)
-plot_grid_rank_hist(
-    data_list=data_trainval_list,
-    JPZ_list=JPZ_trainval_list,
-    name_list=name_trainval_list,
-    path=root_out,
-    file_name=f"RankHistograms_trainval_models_{methods}.png",
-    r=args.r,
-    c=args.c
-)
-plot_grid_rank_hist(
-    data_list=data_test_list,
-    JPZ_list=JPZ_test_list,
-    name_list=name_test_list,
-    path=root_out,
-    file_name=f"RankHistograms_test_models_{methods}.png",
-    r=args.r,
-    c=args.c
-)
+if args.pred == "trainval":
+    print("### Compute JPZ test for training/validation set ###")
+    for Z in Z_trainval_list:
+        data_trainval_list.append([np.count_nonzero(np.logical_and(i/(K+1)<=Z,Z<(i+1)/(K+1)),axis=0)/Z.shape[0] for i in range(K+1)])
+        JPZ_trainval_list.append(JPZ_test(np.array([np.count_nonzero(np.logical_and(i/(K+1)<=Z,Z<(i+1)/(K+1)),axis=0) for i in range(K+1)])))
+    plot_grid_rank_hist(
+        data_list=data_trainval_list,
+        JPZ_list=JPZ_trainval_list,
+        name_list=name_trainval_list,
+        path=root_out,
+        file_name=f"RankHistograms_trainval_models_{methods}.png",
+        r=args.r,
+        c=args.c
+    )
+
+elif args.pred == "test":
+    print("### Compute JPZ test for test set ###")
+    for Z in Z_test_list:
+        data_test_list.append([np.count_nonzero(np.logical_and(i/(K+1)<=Z,Z<(i+1)/(K+1)),axis=0)/Z.shape[0] for i in range(K+1)])
+        JPZ_test_list.append(JPZ_test(np.array([np.count_nonzero(np.logical_and(i/(K+1)<=Z,Z<(i+1)/(K+1)),axis=0) for i in range(K+1)])))
+
+    plot_grid_rank_hist(
+        data_list=data_test_list,
+        JPZ_list=JPZ_test_list,
+        name_list=name_test_list,
+        path=root_out,
+        file_name=f"RankHistograms_test_models_{methods}.png",
+        r=args.r,
+        c=args.c
+    )

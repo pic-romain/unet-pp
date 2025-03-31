@@ -4,9 +4,9 @@ from matplotlib import colors
 import cartopy.crs as ccrs
 import cartopy.feature as cf
 
-# Latitude and longitude (to replace with the actual values)
-lats = np.arange(start=37.5,stop=55.425,step=.025)[::-1]
-lons = np.arange(start=-12,stop=16.025,step=.025)
+# Latitude and longitude (should be modified to match the data if different from the one used in the paper)
+lats = np.arange(start=43.1,stop=45.9,step=.025)[::-1]
+lons = np.arange(start=1.1,stop=5.9,step=.025)
 
 # ---------------------------------------------------------------------------- #
 #                                COMPUTE METRICS                               #
@@ -97,7 +97,7 @@ def plot_crpss_raw(CRPS_mean,CRPS_raw_mean,lons,lats,margin,path_save,alpha=.95)
     plt.close()
     return None
 
-def plot_crpss_qrf(CRPS_mean,CRPS_qrf_mean,border,lons,lats,margin,path_save,alpha=.95):
+def plot_crpss_qrf(CRPS_mean,CRPS_qrf_mean,lons,lats,margin,path_save,alpha=.95):
     CRPSS_qrf = 1-CRPS_mean/CRPS_qrf_mean
     
     fig = plt.figure(figsize=(10,10))

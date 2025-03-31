@@ -20,6 +20,7 @@ from unet import CRPS_gtcnd, CRPS_csgd
 # ---------------------------------------------------------------------------- #
 
 root = "../data"
+root_raw = "../data"
 root_ref = "../output/reference_models/models"
 root_ref_out = "../output/reference_models/CRPS"
 root_unet = "../output/unet_models/parameters"
@@ -35,8 +36,16 @@ Y_test = np.load(os.path.join(root, "Y_test.npy")).astype(np.float32)
 
 if "raw" in args.methods:
     print("### CRPS RAW ###")
-    raw_precip_trainval = np.load(os.path.join(root_ref, "X_raw_trainval.npy")).astype(np.float32)
-    raw_precip_test = np.load(os.path.join(root_ref, "X_raw_test.npy")).astype(np.float32)
+    if "X_raw_trainval.npy" not in os.listdir(root_raw):
+        raise ValueError("X_raw_trainval.npy not found in root_raw")
+    else :
+        raw_precip_trainval = np.load(os.path.join(root_raw, "X_raw_trainval.npy")).astype(np.float32)
+
+    if "X_raw_test.npy" not in os.listdir(root_raw):
+        raise ValueError("X_raw_test.npy not found in root_raw")
+    else :
+        raw_precip_test = np.load(os.path.join(root_raw, "X_raw_test.npy")).astype(np.float32)
+
     np.save(
         file=os.path.join(root_ref_out, "CRPS_raw_trainval.npy"),
         arr=CRPS_fair(raw_precip_trainval, Y_trainval),
@@ -82,7 +91,7 @@ if "qrf" in args.methods:
             raise ValueError("pred should be trainval or test")
         
         np.save(
-            os.path.join(root_ref, f"CRPS/CRPS_qrf_{pred}_q{q}_ntree{ntree}_mtry{mtry}_nodesize{nodesize}.npy"),
+            os.path.join(root_ref_out, f"CRPS_qrf_{pred}_q{q}_ntree{ntree}_mtry{mtry}_nodesize{nodesize}.npy"),
             CRPS_qrf
         )
 
@@ -123,7 +132,7 @@ for distrib in ["gtcnd", "csgd"]:
                 else:
                     raise ValueError("pred should be trainval or test")
                 np.save(
-                    os.path.join(root_ref, f"CRPS/CRPS_qrf+{distrib}_{pred}_q{q}_ntree{ntree}_mtry{mtry}_nodesize{nodesize}.npy"),
+                    os.path.join(root_ref_out, f"CRPS_qrf+{distrib}_{pred}_q{q}_ntree{ntree}_mtry{mtry}_nodesize{nodesize}.npy"),
                     CRPS_qrf
                 )
 

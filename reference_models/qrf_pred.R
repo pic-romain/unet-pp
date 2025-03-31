@@ -6,10 +6,10 @@ parser <- add_option(parser, "--ntree", type = "integer", default = 2000, help =
 parser <- add_option(parser, "--mtry", type = "integer", default = 4, help = "Number of variables randomly sampled as candidates at each split")
 parser <- add_option(parser, "--nodesizemin", type = "integer", default = 20, help = "Minimum size of terminal nodes")
 
-parser <- add_option(parser, "--pred", type = "character", choice = c("cv", "test"), default = "cv", help = "Prediction method")
+parser <- add_option(parser, "--pred", type = "character", default = "test", help = "Prediction method")
 parser <- add_option(parser, "--nfolds", type = "integer", default = 7, help = "Number of folds")
 parser <- add_option(parser, "--nquantiles", type = "integer", default = (17 + 1) * 6 - 1, help = "Number of quantiles")
-parser <- add_option(parser, "--ncpu", type = "integer", default = 16, help = "Number of CPUs to use")
+parser <- add_option(parser, "--ncpu", type = "integer", default = 4, help = "Number of CPUs to use")
 args <- parse_args(parser)
 print(args)
 
@@ -41,8 +41,8 @@ library(ranger)
 # ---------------------------------------------------------------------------- #
 
 np <- reticulate::import("numpy")
-root <- "../data"
-root_out <- "../output/reference_models/models"
+root <- "../data/"
+root_out <- "../output/reference_models/models/"
 
 # Initialize parallel computing
 cl <- parallel::makeCluster(args$ncpu)
@@ -63,7 +63,7 @@ if (args$pred == "cv") {
         i <- coord[pos, 2]
         j <- coord[pos, 3]
 
-        .qrf.fit(x = X_trainval[fold != k, i, j,], y = Y_trainval[fold != k, i, j], mtry = args$mtry, node.size = args$nodesizemin, quantiles = seq(1 / (args$nquantiles + 1), args$nquantiles / (args$nquantiles + 1), 1 / (args$nquantiles + 1)), n_trees = args$ntree, x.test = X_trainval[fold == k, i, j,]) # nolinter
+        .qrf.fit(x = X_trainval[fold != k, i, j,], y = Y_trainval[fold != k, i, j], mtry = args$mtry, node.size = args$nodesizemin, quantiles = seq(1 / (args$nquantiles + 1), args$nquantiles / (args$nquantiles + 1), 1 / (args$nquantiles + 1)), n_trees = args$ntree, x.test = X_trainval[fold == k, i, j,])
     }
     parallel::stopCluster(cl)
 
@@ -93,7 +93,7 @@ if (args$pred == "cv") {
         i <- coord[pos, 1]
         j <- coord[pos, 2]
 
-        .qrf.fit(x = X_trainval[, i, j,], y = Y_trainval[, i, j], mtry = args$mtry, node.size = args$nodesizemin, quantiles = seq(1 / (args$nquantiles + 1), args$nquantiles / (args$nquantiles + 1), 1 / (args$nquantiles + 1)), n_trees = args$ntree, x.test = X_test[, i, j,]) # nolinter
+        .qrf.fit(x = X_trainval[, i, j,], y = Y_trainval[, i, j], mtry = args$mtry, node.size = args$nodesizemin, quantiles = seq(1 / (args$nquantiles + 1), args$nquantiles / (args$nquantiles + 1), 1 / (args$nquantiles + 1)), n_trees = args$ntree, x.test = X_test[, i, j,])
     }
     parallel::stopCluster(cl)
 

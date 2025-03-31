@@ -13,7 +13,7 @@ This repository contains the code for the article "Distributional Regression U-N
 }
 ```
 
-This repository does not provide the data required to run the code. The data used in the article is not available. The code is provided as is and can be used to reproduce the results of the article on the data of the user. Guidance is provided on the expected data shapes and the description of the files.
+This repository does not provide the data required to run the code. **The dataset used is available on [Zenodo](https://doi.org/10.5281/zenodo.15101664).** Guidance is provided on the expected data shapes and the description of the files, in case you want to use the code on your own data.
 
 Table of contents
 ---
@@ -29,27 +29,31 @@ Table of contents
 
 ## Data
 
-**The data of the article is not available.**
+**The dataset used is not in this repository but is available on [Zenodo](https://doi.org/10.5281/zenodo.15101664).**
 
 The code of this repository relies on data in the form of numpy arrays in the `data` folder. The `data` folder should contain the following files:
 - `X_trainval.npy`, `Y_trainval.npy` : predictors and observations for the training/validation set.
 - `X_test.npy`, `Y_test.npy` : predictors and observations for the test set.
-- `trainval_dow.npy` : day of the week for the data in the training/validation set.
+- `X_trainval_log.npy`, `X_test_log.npy` : alternative predictors for the training/validation and test sets, where the raw precipitation is transformed using a log transformation before applying mean/min/max/sd. Use for the DRU models.
+- `trainval_dow.npy` : day of the week for the training/validation set.
 - `X_constant.npy` : constant fields (e.g., orography) used for both the training/validation and test sets. 
 - `X_raw_trainval.npy`, `X_raw_test.npy` : raw ensemble forecasts for the training/validation and test sets.
+- `trainval_dow.npy`: day of the week for each sample in the training/validation set.
+- `dates.txt`: comma-separated list of the dates corresponding to the data of the training/validation and test sets.
+
 
 ### Expected data shapes
 
-| File name            | Expected shape                           |
-| -------------------- | ---------------------------------------- |
-| `X_trainval.npy`     | ($n_{trainval}$, $H$, $W$, $n_{pred}$)   |
-| `X_test.npy`         | ($n_{test}$, $H$, $W$, $n_{pred}$)       |
-| `Y_trainval.npy`     | ($n_{trainval}$, $H$, $W$)               |
-| `Y_test.npy`         | ($n_{test}$, $H$, $W$)                   |
-| `trainval_dow.npy`   | ($n_{trainval}$,)                        |
-| `X_constant.npy`     | ($H$, $W$, $n_{constant}$)               |
-| `X_raw_trainval.npy` | ($n_{trainval}$, $H$, $W$, $n_{member}$) |
-| `X_raw_test.npy`     | ($n_{test}$, $H$, $W$, $n_{member}$)     |
+| File name                               | Expected shape                           |
+| --------------------------------------- | ---------------------------------------- |
+| `X_trainval.npy` / `X_trainval_log.npy` | ($n_{trainval}$, $H$, $W$, $n_{pred}$)   |
+| `X_test.npy` / `X_test_log.npy`         | ($n_{test}$, $H$, $W$, $n_{pred}$)       |
+| `Y_trainval.npy`                        | ($n_{trainval}$, $H$, $W$)               |
+| `Y_test.npy`                            | ($n_{test}$, $H$, $W$)                   |
+| `trainval_dow.npy`                      | ($n_{trainval}$,)                        |
+| `X_constant.npy`                        | ($H$, $W$, $n_{constant}$)               |
+| `X_raw_trainval.npy`                    | ($n_{trainval}$, $H$, $W$, $n_{member}$) |
+| `X_raw_test.npy`                        | ($n_{test}$, $H$, $W$, $n_{member}$)     |
 
 where:
 - $n_{trainval}$ is the number of samples in the training/validation set,

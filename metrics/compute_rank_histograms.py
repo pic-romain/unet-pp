@@ -13,7 +13,6 @@ print(args)
 import os, sys
 sys.path.insert(1,'../utils')
 from metrics_rh import rank_hist, quantile_gtcnd, quantile_csgd
-from learning import trainval_test_index
 
 import numpy as np
 
@@ -22,6 +21,7 @@ import numpy as np
 K = args.K
 
 root_obs = "../data"
+root_raw = "../data"
 root_ref = "../output/reference_models/models"
 root_unet = "../output/unet_models/parameters"
 
@@ -38,8 +38,8 @@ Y_test = np.load(os.path.join(root_obs,"Y_test.npy")).astype(np.float32)
 
 if "raw" in args.methods:
     print("RAW ENSEMBLE")
-    raw_precip_trainval = np.load(os.path.join(root_ref, "X_raw_trainval.npy")).astype(np.float32)
-    raw_precip_test = np.load(os.path.join(root_ref, "X_raw_test.npy")).astype(np.float32)
+    raw_precip_trainval = np.load(os.path.join(root_raw, "X_raw_trainval.npy")).astype(np.float32)
+    raw_precip_test = np.load(os.path.join(root_raw, "X_raw_test.npy")).astype(np.float32)
 
     print("Training/validation set")
     Z_trainval = rank_hist(forecast = raw_precip_trainval, true_obs = Y_trainval)
@@ -149,12 +149,12 @@ for distrib in ["gtcnd","csgd"]:
                 )
             
             if pred=="trainval":
-                rank_unet,Z_unet = rank_hist(
+                Z_unet = rank_hist(
                     forecast=unet_quantiles,
                     true_obs=Y_trainval
                 )
             elif pred=="test":
-                rank_unet,Z_unet = rank_hist(
+                Z_unet = rank_hist(
                     forecast=unet_quantiles,
                     true_obs=Y_test
                 )

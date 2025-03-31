@@ -2,13 +2,13 @@
 
 library(optparse)
 parser <- OptionParser(formatter = IndentedHelpFormatter)
-parser <- add_option(parser, "--ntree", type = "integer", default = 1000, help = "Number of trees")
-parser <- add_option(parser, "--mtry", type = "integer", default = 1, help = "Number of variables randomly sampled as candidates at each split")
-parser <- add_option(parser, "--nodesizemin", type = "integer", default = 5, help = "Minimum size of terminal nodes")
+parser <- add_option(parser, "--ntree", type = "integer", default = 2000, help = "Number of trees")
+parser <- add_option(parser, "--mtry", type = "integer", default = 4, help = "Number of variables randomly sampled as candidates at each split")
+parser <- add_option(parser, "--nodesizemin", type = "integer", default = 20, help = "Minimum size of terminal nodes")
 
-parser <- add_option(parser, "--pred", type = "character", choice=c("cv","test"), default = "cv", help = "Prediction method")
+parser <- add_option(parser, "--pred", type = "character", default = "test", help = "Prediction method")
 parser <- add_option(parser, "--nfolds", type = "integer", default = 7, help = "Number of folds")
-parser <- add_option(parser, "--nquantiles", type = "integer", default = 18 * 6 - 1, help = "Number of quantiles")
+parser <- add_option(parser, "--nquantiles", type = "integer", default = (17 + 1) * 6 - 1, help = "Number of quantiles")
 parser <- add_option(parser, "--ncpu", type = "integer", default = 16, help = "Number of cpus to use")
 args <- parse_args(parser)
 print(args)
@@ -98,7 +98,7 @@ library(ranger)
             # Fit CSGD on the whole data
             params_csgd <- .csgd.pw.fit(data = obs, init = c(1, 1, 0.1))$fit$PWM
             # Predict quantiles from CSGD for quantiles higher than 10mm
-            qrf_pred[r, (n_quantiles_int - length(obsn1) + 1):n_quantiles_int] <- .qcsgd(seq(1 - length(obsn1) / (n_quantiles_int + 1), n_quantiles_int / (n_quantiles_int + 1), length.out = length(obsn1)), k = params_csgd[1], theta = params_csgd[2], delta = params_csgd[3]) # nolinter
+            qrf_pred[r, (n_quantiles_int - length(obsn1) + 1):n_quantiles_int] <- .qcsgd(seq(1 - length(obsn1) / (n_quantiles_int + 1), n_quantiles_int / (n_quantiles_int + 1), length.out = length(obsn1)), k = params_csgd[1], theta = params_csgd[2], delta = params_csgd[3])
 
             # Only change quantiles that are predicted higher by the CSGD
             diff <- obs - qrf_pred[r,]
@@ -118,8 +118,8 @@ library(ranger)
 # ---------------------------------------------------------------------------- #
 
 np <- reticulate::import("numpy")
-root <- "../data"
-root_out <- "../output/reference_models/models"
+root <- "../data/"
+root_out <- "../output/reference_models/models/"
 
 # Initialize parallel computing
 cl <- parallel::makeCluster(args$ncpu)
@@ -140,7 +140,7 @@ if (args$pred == "cv") {
         i <- coord[pos, 2]
         j <- coord[pos, 3]
 
-        .qrf.csgd.fit(X_trainval[fold != k, i, j,], y = Y_trainval[fold != k, i, j], mtry = args$mtry, node.size = args$nodesizemin, quantiles = seq(1 / (args$nquantiles + 1), args$nquantiles / (args$nquantiles + 1), 1 / (args$nquantiles + 1)), n_trees = args$ntree, x.test = X_trainval[fold == k, i, j,]) # nolinter
+        .qrf.csgd.fit(X_trainval[fold != k, i, j,], y = Y_trainval[fold != k, i, j], mtry = args$mtry, node.size = args$nodesizemin, quantiles = seq(1 / (args$nquantiles + 1), args$nquantiles / (args$nquantiles + 1), 1 / (args$nquantiles + 1)), n_trees = args$ntree, x.test = X_trainval[fold == k, i, j,])
     }
     parallel::stopCluster(cl)
 

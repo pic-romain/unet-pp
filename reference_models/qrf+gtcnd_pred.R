@@ -2,13 +2,13 @@
 
 library(optparse)
 parser <- OptionParser(formatter = IndentedHelpFormatter)
-parser <- add_option(parser, "--ntree", type = "integer", default = 1000, help = "Number of trees")
-parser <- add_option(parser, "--mtry", type = "integer", default = 1, help = "Number of variables randomly sampled as candidates at each split")
-parser <- add_option(parser, "--nodesizemin", type = "integer", default = 5, help = "Minimum size of terminal nodes")
+parser <- add_option(parser, "--ntree", type = "integer", default = 2000, help = "Number of trees")
+parser <- add_option(parser, "--mtry", type = "integer", default = 4, help = "Number of variables randomly sampled as candidates at each split")
+parser <- add_option(parser, "--nodesizemin", type = "integer", default = 20, help = "Minimum size of terminal nodes")
 
-parser <- add_option(parser, "--pred", type = "character", default = "cv", choice=c("cv","test"), help = "Prediction method")
+parser <- add_option(parser, "--pred", type = "character", default = "test", help = "Prediction method")
 parser <- add_option(parser, "--nfolds", type = "integer", default = 7, help = "Number of folds")
-parser <- add_option(parser, "--nquantiles", type = "integer", default = 18 * 6 - 1, help = "Number of quantiles")
+parser <- add_option(parser, "--nquantiles", type = "integer", default = (17 + 1) * 6 - 1, help = "Number of quantiles")
 parser <- add_option(parser, "--ncpu", type = "integer", default = 16, help = "Number of cpus to use")
 args <- parse_args(parser)
 print(args)
@@ -117,8 +117,8 @@ library(ranger)
 # ---------------------------------------------------------------------------- #
 
 np <- reticulate::import("numpy")
-root <- "../data"
-root_out <- "../output/reference_models/models"
+root <- "../data/"
+root_out <- "../output/reference_models/models/"
 
 # Initialize parallel computing
 cl <- parallel::makeCluster(args$ncpu)
