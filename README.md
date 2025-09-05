@@ -4,12 +4,18 @@ This repository contains the code for the article "Distributional Regression U-N
 
 ```bibtex	
 @misc{Pic2024DRU,
-    title={Distributional Regression U-Nets for the Postprocessing of Precipitation Ensemble Forecasts},
-    author={Romain Pic and Clément Dombry and Philippe Naveau and Maxime Taillardat},
-    year={2024},
-    eprint={2407.02125},
-    archivePrefix={arXiv},
-    url={https://arxiv.org/abs/2407.02125}, 
+      author        = {Pic, Romain and Dombry, Clément and Naveau, Philippe and Taillardat, Maxime},
+      title         = {Distributional Regression U-Nets for the Postprocessing of Precipitation Ensemble Forecasts},
+      journal       = {Artificial Intelligence for the Earth Systems},
+      month         = jul, 
+      year          = {2025},
+      doi = {10.1175/AIES-D-24-0067.1},
+      publisher = {American Meteorological Society},
+      address = {Boston MA, USA},
+      volume = {4},
+      number = {4},
+      pages=      {240067},
+      url = {https://journals.ametsoc.org/view/journals/aies/aop/AIES-D-24-0067.1/AIES-D-24-0067.1.xml},
 }
 ```
 
